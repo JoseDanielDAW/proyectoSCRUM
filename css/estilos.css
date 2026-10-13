@@ -1,0 +1,112 @@
+/* Quitamos los márgenes que el navegador pone por defecto */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* El fondo de toda la página, con la cajita centrada */
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2f7;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* La cajita blanca del login */
+.contenedor {
+  background: white;
+  width: 100%;
+  max-width: 380px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Clase para ocultar elementos */
+.oculto {
+  display: none;
+}
+
+h1 {
+  text-align: center;
+  color: #1f3a5f;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  text-align: center;
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Los cuadros donde se escribe */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+/* Cuando haces clic en un cuadro, se resalta en azul */
+input:focus {
+  outline: none;
+  border-color: #2d6cdf;
+}
+
+button {
+  width: 100%;
+  padding: 11px;
+  background: #2d6cdf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Un poquito más oscuro cuando pasas el ratón por encima */
+button:hover {
+  background: #1f55b8;
+}
+
+/* Estilos específicos para los botones de la pantalla principal y volver */
+.btn-opcion {
+  margin-bottom: 12px;
+}
+
+.btn-secundario {
+  background: #6c757d;
+  margin-top: 10px;
+}
+
+.btn-secundario:hover {
+  background: #5a6268;
+}
+
+/* El mensaje de error o de éxito */
+#mensaje {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.error {
+  color: #d93025;
+}
+
+.exito {
+  color: #1e8e3e;
+}

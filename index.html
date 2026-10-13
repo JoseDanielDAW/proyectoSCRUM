@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tareas</title>
+  <script src="js/script.js" defer></script>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <div id="vista-landing" class="contenedor">
+    <h1>Bienvenido a la Web</h1>
+    <p class="subtitulo">Tu plataforma integral para la gestión y consulta de tareas académicas.</p>
+    <button type="button" id="btn-empezar" class="btn-opcion">Empezar</button>
+  </div>
+
+  <!-- Vista Selección -->
+  <div id="vista-seleccion" class="contenedor oculto">
+    <h1>Gestión de Tareas</h1>
+    <p class="subtitulo">Selecciona cómo deseas iniciar sesión</p>
+    <button type="button" id="btn-rol-profesor" class="btn-opcion">Iniciar como profesor</button>
+    <button type="button" id="btn-rol-alumno" class="btn-opcion">Iniciar como alumno</button>
+    <button type="button" id="btn-volver-landing" class="btn-secundario">Volver al inicio</button>
+  </div>
+
+  <!-- Vista profesor-->
+  <div id="vista-login" class="contenedor oculto">
+    <h1>Acceso Profesor</h1>
+    <p class="subtitulo">Entra para consultar las tareas</p>
+
+    <!-- El formulario con usuario y contraseña -->
+    <form id="formulario-login">
+
+      <label for="usuario">Usuario</label>
+      <input type="text" id="usuario" placeholder="Escribe tu usuario">
+
+      <label for="clave">Contraseña</label>
+      <input type="password" id="clave" placeholder="Escribe tu contraseña">
+
+      <button type="button" id="boton-entrar">Entrar</button>
+
+      <!-- para poner mensajes -->
+      <p id="mensaje"></p>
+    </form>
+    
+    <button type="button" id="btn-volver" class="btn-secundario">Volver</button>
+  </div>
+
+</body>
+</html>
