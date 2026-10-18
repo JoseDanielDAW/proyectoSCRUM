@@ -47,5 +47,31 @@
     <button type="button" id="btn-volver" class="btn-secundario">Volver</button>
   </div>
 
+  <!-- Vista Horario (para profesor y alumno) -->
+  <div id="vista-horario" class="contenedor contenedor-ancho oculto">
+    <h1>Horario</h1>
+    <p class="subtitulo" id="subtitulo-horario"></p>
+
+    <!-- Este div permite hacer scroll lateral en pantallas pequeñas -->
+    <div class="tabla-scroll">
+      <table id="tabla-horario">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+          </tr>
+        </thead>
+        <!-- Las filas se rellenan desde JS -->
+        <tbody id="cuerpo-horario"></tbody>
+      </table>
+    </div>
+
+    <button type="button" id="btn-cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
+  </div>
+
 </body>
 </html>

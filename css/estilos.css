@@ -25,6 +25,11 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Contenedor más ancho para que quepa la tabla del horario */
+.contenedor-ancho {
+  max-width: 800px;
+}
+
 /* Clase para ocultar elementos */
 .oculto {
   display: none;
@@ -109,4 +114,38 @@ button:hover {
 
 .exito {
   color: #1e8e3e;
+}
+
+/* Scroll lateral si la tabla no cabe en pantallas pequeñas */
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Cabecera de la tabla con el azul del resto de la web */
+th {
+  background: #1f3a5f;
+  color: white;
+}
+
+/* Filas alternas con otro color para leer mejor */
+tbody tr:nth-child(even) {
+  background: #f5f7fa;
+}
+
+/* La primera columna (la hora) en negrita */
+td:first-child {
+  font-weight: bold;
+  white-space: nowrap;
 }
