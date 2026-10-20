@@ -149,3 +149,17 @@ td:first-child {
   font-weight: bold;
   white-space: nowrap;
 }
+
+/* Separación de los botones respecto a la tabla */
+#btn-editar-horario,
+#btn-guardar-horario {
+  margin-top: 15px;
+}
+
+/* Cuadros de texto dentro de la tabla de edición */
+table input {
+  margin-bottom: 0;
+  padding: 6px;
+  min-width: 120px;
+  font-size: 13px;
+}
