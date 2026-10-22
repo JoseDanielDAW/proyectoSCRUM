@@ -163,3 +163,9 @@ table input {
   min-width: 120px;
   font-size: 13px;
 }
+
+.btn-mini {
+  width: auto;
+  padding: 3px 8px;
+  font-size: 12px;
+}

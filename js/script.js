@@ -87,7 +87,8 @@ function mostrarHorario() {
   cuerpoHorario.innerHTML = "";
 
   // Creamos una fila por cada hora
-  horario.forEach(function (fila) {
+    // Creamos una fila por cada hora
+  horario.forEach(function (fila, indiceFila) {
     const tr = document.createElement("tr");
 
     const tdHora = document.createElement("td");
@@ -95,9 +96,37 @@ function mostrarHorario() {
     tr.appendChild(tdHora);
 
     // Una celda por cada día (si está vacío ponemos un guion)
-    fila.dias.forEach(function (clase) {
+    fila.dias.forEach(function (clase, indiceDia) {
       const td = document.createElement("td");
       td.textContent = clase === "" ? "-" : clase;
+      /**/
+      // Si es el profesor y la clase es una tutoría, añadimos los botones
+      if (rolActual === "profesor" && esTutoria(clase)) {
+        const acciones = document.createElement("div");
+        acciones.className = "acciones-tutoria";
+
+        const btnMod = document.createElement("button");
+        btnMod.type = "button";
+        btnMod.className = "btn-mini";
+        btnMod.textContent = "Modificar";
+        btnMod.addEventListener("click", function () {
+          abrirModificarTutoria(indiceFila, indiceDia);
+        });
+
+        const btnCan = document.createElement("button");
+        btnCan.type = "button";
+        btnCan.className = "btn-mini btn-cancelar";
+        btnCan.textContent = "Cancelar";
+        btnCan.addEventListener("click", function () {
+          cancelarTutoria(indiceFila, indiceDia);
+        });
+
+        acciones.appendChild(btnMod);
+        acciones.appendChild(btnCan);
+        td.appendChild(acciones);
+      }
+
+      /**/
       tr.appendChild(td);
     });
 
@@ -164,6 +193,103 @@ function guardarHorario() {
   vistaEditar.classList.add("oculto");
   mostrarHorario();
 }
+
+/**/
+// ===== Tutorías: cancelar y modificar =====
+const vistaTutoria = document.getElementById("vista-tutoria");
+const textoTutoria = document.getElementById("texto-tutoria");
+const selectDiaTutoria = document.getElementById("dia-tutoria");
+const selectHoraTutoria = document.getElementById("hora-tutoria");
+const mensajeTutoria = document.getElementById("mensaje-tutoria");
+const btnGuardarTutoria = document.getElementById("btn-guardar-tutoria");
+const btnCancelarModTutoria = document.getElementById("btn-cancelar-mod-tutoria");
+
+const nombresDias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+// Posición (fila y día) de la tutoría que se está modificando
+let tutoriaEnEdicion = null;
+
+// Dice si el texto de una casilla es una tutoría
+function esTutoria(texto) {
+  return texto.trim().toLowerCase().startsWith("tutoría");
+}
+
+// Guarda el horario del profesor en el navegador
+function guardarEnNavegador() {
+  try {
+    localStorage.setItem(claveHorarioProfesor, JSON.stringify(horarioProfesor));
+  } catch (error) {
+    // Si no se puede guardar, el cambio sigue valiendo mientras la página esté abierta
+  }
+}
+
+// Cancelar una tutoría: se vacía su casilla
+function cancelarTutoria(indiceFila, indiceDia) {
+  const hora = horarioProfesor[indiceFila].hora;
+  const dia = nombresDias[indiceDia];
+
+  if (!confirm("¿Seguro que quieres cancelar la tutoría del " + dia + " (" + hora + ")?")) {
+    return;
+  }
+
+  horarioProfesor[indiceFila].dias[indiceDia] = "";
+  guardarEnNavegador();
+  mostrarHorario();
+}
+
+// Abrir la pantalla para modificar una tutoría
+function abrirModificarTutoria(indiceFila, indiceDia) {
+  tutoriaEnEdicion = { fila: indiceFila, dia: indiceDia };
+
+  textoTutoria.value = horarioProfesor[indiceFila].dias[indiceDia];
+
+  selectDiaTutoria.innerHTML = "";
+  nombresDias.forEach(function (nombre, i) {
+    selectDiaTutoria.add(new Option(nombre, i));
+  });
+  selectDiaTutoria.value = indiceDia;
+
+  selectHoraTutoria.innerHTML = "";
+  horarioProfesor.forEach(function (fila, i) {
+    selectHoraTutoria.add(new Option(fila.hora, i));
+  });
+  selectHoraTutoria.value = indiceFila;
+
+  mensajeTutoria.textContent = "";
+  vistaHorario.classList.add("oculto");
+  vistaTutoria.classList.remove("oculto");
+}
+
+// Guardar los cambios de la tutoría (texto, día y/o hora)
+function guardarTutoria() {
+  const texto = textoTutoria.value.trim();
+  const nuevaFila = Number(selectHoraTutoria.value);
+  const nuevoDia = Number(selectDiaTutoria.value);
+  const { fila, dia } = tutoriaEnEdicion;
+
+  if (texto === "") {
+    mensajeTutoria.textContent = "Escribe el nombre de la tutoría.";
+    return;
+  }
+
+  const cambiaHueco = nuevaFila !== fila || nuevoDia !== dia;
+
+  // No se puede mover a un hueco que ya tiene otra clase
+  if (cambiaHueco && horarioProfesor[nuevaFila].dias[nuevoDia] !== "") {
+    mensajeTutoria.textContent = "Ese hueco ya está ocupado por otra clase.";
+    return;
+  }
+
+  horarioProfesor[fila].dias[dia] = "";
+  horarioProfesor[nuevaFila].dias[nuevoDia] = texto;
+  guardarEnNavegador();
+
+  tutoriaEnEdicion = null;
+  vistaTutoria.classList.add("oculto");
+  mostrarHorario();
+}
+
+/**/
 
 // Eventos para ventana principal
 btnEmpezar.addEventListener("click", function () {
@@ -247,5 +373,14 @@ btnGuardarHorario.addEventListener("click", guardarHorario);
 
 btnCancelarEdicion.addEventListener("click", function () {
   vistaEditar.classList.add("oculto");
+  vistaHorario.classList.remove("oculto");
+});
+
+// Eventos para modificar una tutoría
+btnGuardarTutoria.addEventListener("click", guardarTutoria);
+
+btnCancelarModTutoria.addEventListener("click", function () {
+  tutoriaEnEdicion = null;
+  vistaTutoria.classList.add("oculto");
   vistaHorario.classList.remove("oculto");
 });
