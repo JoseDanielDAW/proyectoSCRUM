@@ -68,6 +68,19 @@ const horarioAlumno = [
   { hora: "11:30 - 12:30", dias: ["Educación Física", "Música", "Inglés", "Lengua", "Tutoría"] }
 ];
 
+// Reservas de tutorías: se guarda qué tutorías están reservadas
+// La clave es "fila-día" (por ejemplo "2-0") y el valor es true
+const claveReservas = "reservasTutorias";
+let reservas = {};
+try {
+  const reservasGuardadas = JSON.parse(localStorage.getItem(claveReservas));
+  if (reservasGuardadas && typeof reservasGuardadas === "object" && !Array.isArray(reservasGuardadas)) {
+    reservas = reservasGuardadas;
+  }
+} catch (error) {
+  // Si los datos guardados no son válidos, empezamos sin reservas
+}
+
 // Función que rellena la tabla según el rol
 function mostrarHorario() {
   // Elegimos el horario según el rol
@@ -82,6 +95,12 @@ function mostrarHorario() {
 
   // El botón de editar solo se muestra al profesor
   btnEditarHorario.classList.toggle("oculto", rolActual !== "profesor");
+
+    // El botón de reservar solo se muestra al alumno
+  btnReservarTutoria.classList.toggle("oculto", rolActual !== "alumno");
+
+  // Quitamos las reservas de tutorías que ya no existen
+  limpiarReservas();
 
   // Vaciamos la tabla por si ya tenía filas
   cuerpoHorario.innerHTML = "";
@@ -102,6 +121,14 @@ function mostrarHorario() {
       /**/
       // Si es el profesor y la clase es una tutoría, añadimos los botones
       if (rolActual === "profesor" && esTutoria(clase)) {
+        // Si algún alumno ha reservado esta tutoría
+        if (reservas[indiceFila + "-" + indiceDia]) {
+          const etiqueta = document.createElement("div");
+          etiqueta.className = "etiqueta-reservada";
+          etiqueta.textContent = "(Reservada)";
+          td.appendChild(etiqueta);
+        }
+
         const acciones = document.createElement("div");
         acciones.className = "acciones-tutoria";
 
@@ -233,6 +260,9 @@ function cancelarTutoria(indiceFila, indiceDia) {
   }
 
   horarioProfesor[indiceFila].dias[indiceDia] = "";
+  // Si estaba reservada, la reserva también se elimina
+  delete reservas[indiceFila + "-" + indiceDia];
+  guardarReservas();
   guardarEnNavegador();
   mostrarHorario();
 }
@@ -280,6 +310,14 @@ function guardarTutoria() {
     return;
   }
 
+  // Si la tutoría estaba reservada, la reserva se mueve con ella
+  const claveVieja = fila + "-" + dia;
+  if (reservas[claveVieja]) {
+    delete reservas[claveVieja];
+    reservas[nuevaFila + "-" + nuevoDia] = true;
+    guardarReservas();
+  }
+
   horarioProfesor[fila].dias[dia] = "";
   horarioProfesor[nuevaFila].dias[nuevoDia] = texto;
   guardarEnNavegador();
@@ -290,6 +328,114 @@ function guardarTutoria() {
 }
 
 /**/
+// ===== Reservar tutorías (alumno) =====
+const btnReservarTutoria = document.getElementById("btn-reservar-tutoria");
+const vistaReservar = document.getElementById("vista-reservar");
+const listaTutorias = document.getElementById("lista-tutorias");
+const mensajeReserva = document.getElementById("mensaje-reserva");
+const btnVolverReservas = document.getElementById("btn-volver-reservas");
+
+// Guarda las reservas en el navegador
+function guardarReservas() {
+  try {
+    localStorage.setItem(claveReservas, JSON.stringify(reservas));
+  } catch (error) {
+    // Si no se puede guardar, las reservas siguen valiendo mientras la página esté abierta
+  }
+}
+
+// Borra las reservas de casillas que ya no son una tutoría
+function limpiarReservas() {
+  let hayCambios = false;
+
+  Object.keys(reservas).forEach(function (clave) {
+    const partes = clave.split("-");
+    const fila = horarioProfesor[Number(partes[0])];
+    const clase = fila ? fila.dias[Number(partes[1])] : undefined;
+
+    if (typeof clase !== "string" || !esTutoria(clase)) {
+      delete reservas[clave];
+      hayCambios = true;
+    }
+  });
+
+  if (hayCambios) {
+    guardarReservas();
+  }
+}
+
+// Reserva una tutoría libre o anula una ya reservada
+function cambiarReserva(clave) {
+  if (reservas[clave]) {
+    delete reservas[clave];
+    mensajeReserva.textContent = "Reserva anulada.";
+  } else {
+    reservas[clave] = true;
+    mensajeReserva.textContent = "¡Tutoría reservada!";
+  }
+  mensajeReserva.className = "exito";
+
+  guardarReservas();
+  mostrarListaTutorias();
+}
+
+// Rellena la lista con las tutorías que ofrece el profesor
+function mostrarListaTutorias() {
+  limpiarReservas();
+  listaTutorias.innerHTML = "";
+  let hayTutorias = false;
+
+  horarioProfesor.forEach(function (fila, indiceFila) {
+    fila.dias.forEach(function (clase, indiceDia) {
+      if (!esTutoria(clase)) {
+        return;
+      }
+      hayTutorias = true;
+
+      const clave = indiceFila + "-" + indiceDia;
+      const reservada = reservas[clave] === true;
+
+      const item = document.createElement("div");
+      item.className = "item-tutoria";
+
+      const info = document.createElement("span");
+      info.textContent = nombresDias[indiceDia] + " · " + fila.hora;
+      if (reservada) {
+        info.textContent += " (reservada)";
+        info.className = "texto-reservada";
+      }
+
+      const boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = reservada ? "btn-mini btn-cancelar" : "btn-mini";
+      boton.textContent = reservada ? "Anular reserva" : "Reservar";
+      boton.addEventListener("click", function () {
+        cambiarReserva(clave);
+      });
+
+      item.appendChild(info);
+      item.appendChild(boton);
+      listaTutorias.appendChild(item);
+    });
+  });
+
+  if (!hayTutorias) {
+    listaTutorias.textContent = "No hay tutorías disponibles ahora mismo.";
+  }
+}
+
+// Abre la pantalla de reservas
+function abrirReservas() {
+  // Solo el alumno puede reservar
+  if (rolActual !== "alumno") {
+    return;
+  }
+
+  mensajeReserva.textContent = "";
+  mostrarListaTutorias();
+  vistaHorario.classList.add("oculto");
+  vistaReservar.classList.remove("oculto");
+}
 
 // Eventos para ventana principal
 btnEmpezar.addEventListener("click", function () {
@@ -382,5 +528,13 @@ btnGuardarTutoria.addEventListener("click", guardarTutoria);
 btnCancelarModTutoria.addEventListener("click", function () {
   tutoriaEnEdicion = null;
   vistaTutoria.classList.add("oculto");
+  vistaHorario.classList.remove("oculto");
+});
+
+// Eventos para reservar tutorías
+btnReservarTutoria.addEventListener("click", abrirReservas);
+
+btnVolverReservas.addEventListener("click", function () {
+  vistaReservar.classList.add("oculto");
   vistaHorario.classList.remove("oculto");
 });

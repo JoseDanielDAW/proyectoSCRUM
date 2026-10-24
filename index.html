@@ -72,6 +72,7 @@
 
     <button type="button" id="btn-editar-horario" class="btn-opcion oculto">Editar horario</button>
     <button type="button" id="btn-cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
+    <button type="button" id="btn-reservar-tutoria" class="btn-opcion oculto">Reservar tutoría</button> <!--Boton para reservar una tutoria-->
   </div>
 
   <!-- Vista Editar horario (solo profesor) -->
@@ -117,6 +118,16 @@
     <button type="button" id="btn-cancelar-mod-tutoria" class="btn-secundario">Volver</button>
     <p id="mensaje-tutoria" class="error"></p>
   </div>
+  
+  <!-- Vista Reservar tutoría (solo alumno) -->
+  <div id="vista-reservar" class="contenedor oculto">
+    <h1>Reservar tutoría</h1>
+    <p class="subtitulo">Elige una de las tutorías que ofrece el profesor</p>
 
+    <div id="lista-tutorias"></div>
+
+    <p id="mensaje-reserva"></p>
+    <button type="button" id="btn-volver-reservas" class="btn-secundario">Volver al horario</button>
+  </div>
 </body>
 </html>
