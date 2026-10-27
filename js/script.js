@@ -1,44 +1,81 @@
-// Pedimos el id de los elementos del HTML que vamos a necesitar
+/* JavaScript */
+
+// =====================================================
+// 1. ELEMENTOS DEL HTML (todos juntos arriba)
+// =====================================================
+
+// Login
 const formulario = document.getElementById("formulario-login");
 const campoUsuario = document.getElementById("usuario");
 const campoClave = document.getElementById("clave");
 const mensaje = document.getElementById("mensaje");
+const tituloLogin = document.querySelector("#vista-login h1");
 
-// Elementos para vla vista
+// Vistas
 const vistaLanding = document.getElementById("vista-landing");
 const vistaSeleccion = document.getElementById("vista-seleccion");
 const vistaLogin = document.getElementById("vista-login");
+const vistaHorario = document.getElementById("vista-horario");
+const vistaEditar = document.getElementById("vista-editar");
+const vistaTutoria = document.getElementById("vista-tutoria");
+const vistaReservar = document.getElementById("vista-reservar");
+const vistaMisTutorias = document.getElementById("vista-mis-tutorias");
+
+// Botones de navegación inicial
 const btnEmpezar = document.getElementById("btn-empezar");
 const btnVolverLanding = document.getElementById("btn-volver-landing");
 const btnRolProfesor = document.getElementById("btn-rol-profesor");
-const btnRolAlumno = document.getElementById("btn-rol-alumno"); 
+const btnRolAlumno = document.getElementById("btn-rol-alumno");
 const btnVolver = document.getElementById("btn-volver");
-const botonEntrar = document.getElementById("boton-entrar");
-const tituloLogin = document.querySelector("#vista-login h1"); 
 
-// Elementos para el horario
-const vistaHorario = document.getElementById("vista-horario");
+// Horario
 const subtituloHorario = document.getElementById("subtitulo-horario");
 const cuerpoHorario = document.getElementById("cuerpo-horario");
 const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
-
-// Elementos para editar el horario
-const vistaEditar = document.getElementById("vista-editar");
-const cuerpoEditar = document.getElementById("cuerpo-editar");
 const btnEditarHorario = document.getElementById("btn-editar-horario");
+const btnReservarTutoria = document.getElementById("btn-reservar-tutoria");
+const btnMisTutorias = document.getElementById("btn-mis-tutorias");
+
+// Editar horario (profesor)
+const cuerpoEditar = document.getElementById("cuerpo-editar");
 const btnGuardarHorario = document.getElementById("btn-guardar-horario");
 const btnCancelarEdicion = document.getElementById("btn-cancelar-edicion");
 
-// Variable para saber el rol 
-let rolActual = ""; 
+// Modificar tutoría (profesor)
+const textoTutoria = document.getElementById("texto-tutoria");
+const selectDiaTutoria = document.getElementById("dia-tutoria");
+const selectHoraTutoria = document.getElementById("hora-tutoria");
+const mensajeTutoria = document.getElementById("mensaje-tutoria");
+const btnGuardarTutoria = document.getElementById("btn-guardar-tutoria");
+const btnCancelarModTutoria = document.getElementById("btn-cancelar-mod-tutoria");
 
-// Los datos correctos para entrar como profesor
-const usuarioCorrectoProfesor = "profesor"; 
-const claveCorrectaProfesor = "profesor";  
+// Reservar tutoría (alumno)
+const listaTutorias = document.getElementById("lista-tutorias");
+const mensajeReserva = document.getElementById("mensaje-reserva");
+const btnIrMisTutorias = document.getElementById("btn-ir-mis-tutorias");
+const btnVolverReservas = document.getElementById("btn-volver-reservas");
 
-// Los datos correctos para el alumno
+// Mis tutorías (alumno)
+const resumenMisTutorias = document.getElementById("resumen-mis-tutorias");
+const listaMisTutorias = document.getElementById("lista-mis-tutorias");
+const mensajeMisTutorias = document.getElementById("mensaje-mis-tutorias");
+const btnReservarOtra = document.getElementById("btn-reservar-otra");
+const btnVolverMisTutorias = document.getElementById("btn-volver-mis-tutorias");
+
+// =====================================================
+// 2. DATOS
+// =====================================================
+
+// Variable para saber el rol
+let rolActual = "";
+
+// Los datos correctos para entrar
+const usuarioCorrectoProfesor = "profesor";
+const claveCorrectaProfesor = "profesor";
 const usuarioCorrectoAlumno = "alumno";
 const claveCorrectaAlumno = "alumno";
+
+const nombresDias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
 // Horario del profesor (los datos son de ejemplo)
 // Cada fila es una hora y sus 5 días, de lunes a viernes
@@ -68,8 +105,7 @@ const horarioAlumno = [
   { hora: "11:30 - 12:30", dias: ["Educación Física", "Música", "Inglés", "Lengua", "Tutoría"] }
 ];
 
-// Reservas de tutorías: se guarda qué tutorías están reservadas
-// La clave es "fila-día" (por ejemplo "2-0") y el valor es true
+// Reservas de tutorías: la clave es "fila-día" (por ejemplo "2-0") y el valor es true
 const claveReservas = "reservasTutorias";
 let reservas = {};
 try {
@@ -80,6 +116,88 @@ try {
 } catch (error) {
   // Si los datos guardados no son válidos, empezamos sin reservas
 }
+
+// Posición (fila y día) de la tutoría que se está modificando
+let tutoriaEnEdicion = null;
+
+// =====================================================
+// 3. FUNCIONES AUXILIARES
+// =====================================================
+
+// Todas las vistas, para poder mostrar una y ocultar el resto
+const todasLasVistas = [
+  vistaLanding, vistaSeleccion, vistaLogin, vistaHorario,
+  vistaEditar, vistaTutoria, vistaReservar, vistaMisTutorias
+];
+
+// Muestra solo la vista indicada
+function mostrarVista(vista) {
+  todasLasVistas.forEach(function (v) {
+    v.classList.toggle("oculto", v !== vista);
+  });
+}
+
+// Crea la clave de una casilla del horario, por ejemplo "2-0"
+function crearClave(indiceFila, indiceDia) {
+  return indiceFila + "-" + indiceDia;
+}
+
+// Dice si el texto de una casilla es una tutoría
+function esTutoria(texto) {
+  return typeof texto === "string" && texto.trim().toLowerCase().startsWith("tutoría");
+}
+
+// Guarda el horario del profesor en el navegador
+function guardarEnNavegador() {
+  try {
+    localStorage.setItem(claveHorarioProfesor, JSON.stringify(horarioProfesor));
+  } catch (error) {
+    // Si no se puede guardar, el cambio sigue valiendo mientras la página esté abierta
+  }
+}
+
+// Guarda las reservas en el navegador
+function guardarReservas() {
+  try {
+    localStorage.setItem(claveReservas, JSON.stringify(reservas));
+  } catch (error) {
+    // Si no se puede guardar, las reservas siguen valiendo mientras la página esté abierta
+  }
+}
+
+// Borra las reservas de casillas que ya no son una tutoría
+function limpiarReservas() {
+  let hayCambios = false;
+
+  Object.keys(reservas).forEach(function (clave) {
+    const partes = clave.split("-");
+    const fila = horarioProfesor[Number(partes[0])];
+    const clase = fila ? fila.dias[Number(partes[1])] : undefined;
+
+    if (!esTutoria(clase)) {
+      delete reservas[clave];
+      hayCambios = true;
+    }
+  });
+
+  if (hayCambios) {
+    guardarReservas();
+  }
+}
+
+// Crea un botón pequeño (se usa en varias listas)
+function crearBotonMini(texto, esCancelar, accion) {
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = esCancelar ? "btn-mini btn-cancelar" : "btn-mini";
+  boton.textContent = texto;
+  boton.addEventListener("click", accion);
+  return boton;
+}
+
+// =====================================================
+// 4. HORARIO
+// =====================================================
 
 // Función que rellena la tabla según el rol
 function mostrarHorario() {
@@ -93,20 +211,22 @@ function mostrarHorario() {
     subtituloHorario.textContent = "Horario del alumno";
   }
 
-  // El botón de editar solo se muestra al profesor
+  // Cada botón solo se muestra al rol que lo necesita
   btnEditarHorario.classList.toggle("oculto", rolActual !== "profesor");
-
-    // El botón de reservar solo se muestra al alumno
   btnReservarTutoria.classList.toggle("oculto", rolActual !== "alumno");
+  btnMisTutorias.classList.toggle("oculto", rolActual !== "alumno");
 
   // Quitamos las reservas de tutorías que ya no existen
   limpiarReservas();
+
+  // Contador de reservas en el botón del alumno
+  const totalReservas = Object.keys(reservas).length;
+  btnMisTutorias.textContent = totalReservas > 0 ? "Mis tutorías (" + totalReservas + ")" : "Mis tutorías";
 
   // Vaciamos la tabla por si ya tenía filas
   cuerpoHorario.innerHTML = "";
 
   // Creamos una fila por cada hora
-    // Creamos una fila por cada hora
   horario.forEach(function (fila, indiceFila) {
     const tr = document.createElement("tr");
 
@@ -118,11 +238,11 @@ function mostrarHorario() {
     fila.dias.forEach(function (clase, indiceDia) {
       const td = document.createElement("td");
       td.textContent = clase === "" ? "-" : clase;
-      /**/
+
       // Si es el profesor y la clase es una tutoría, añadimos los botones
       if (rolActual === "profesor" && esTutoria(clase)) {
         // Si algún alumno ha reservado esta tutoría
-        if (reservas[indiceFila + "-" + indiceDia]) {
+        if (reservas[crearClave(indiceFila, indiceDia)]) {
           const etiqueta = document.createElement("div");
           etiqueta.className = "etiqueta-reservada";
           etiqueta.textContent = "(Reservada)";
@@ -131,43 +251,30 @@ function mostrarHorario() {
 
         const acciones = document.createElement("div");
         acciones.className = "acciones-tutoria";
-
-        const btnMod = document.createElement("button");
-        btnMod.type = "button";
-        btnMod.className = "btn-mini";
-        btnMod.textContent = "Modificar";
-        btnMod.addEventListener("click", function () {
+        acciones.appendChild(crearBotonMini("Modificar", false, function () {
           abrirModificarTutoria(indiceFila, indiceDia);
-        });
-
-        const btnCan = document.createElement("button");
-        btnCan.type = "button";
-        btnCan.className = "btn-mini btn-cancelar";
-        btnCan.textContent = "Cancelar";
-        btnCan.addEventListener("click", function () {
+        }));
+        acciones.appendChild(crearBotonMini("Cancelar", true, function () {
           cancelarTutoria(indiceFila, indiceDia);
-        });
-
-        acciones.appendChild(btnMod);
-        acciones.appendChild(btnCan);
+        }));
         td.appendChild(acciones);
       }
 
-      /**/
       tr.appendChild(td);
     });
 
     cuerpoHorario.appendChild(tr);
   });
 
-  // Pasamos de la vista de login a la del horario
-  vistaLogin.classList.add("oculto");
-  vistaHorario.classList.remove("oculto");
+  mostrarVista(vistaHorario);
 }
 
-// Función que abre la vista de edición con una casilla por cada clase
+// =====================================================
+// 5. EDITAR HORARIO (profesor)
+// =====================================================
+
+// Abre la vista de edición con una casilla por cada clase
 function abrirEdicion() {
-  // Solo el profesor puede editar
   if (rolActual !== "profesor") {
     return;
   }
@@ -195,11 +302,10 @@ function abrirEdicion() {
     cuerpoEditar.appendChild(tr);
   });
 
-  vistaHorario.classList.add("oculto");
-  vistaEditar.classList.remove("oculto");
+  mostrarVista(vistaEditar);
 }
 
-// Función que lee las casillas y guarda el nuevo horario
+// Lee las casillas y guarda el nuevo horario
 function guardarHorario() {
   const filas = cuerpoEditar.querySelectorAll("tr");
 
@@ -210,45 +316,13 @@ function guardarHorario() {
     });
   });
 
-  // Guardamos en el navegador para que no se pierda al recargar
-  try {
-    localStorage.setItem(claveHorarioProfesor, JSON.stringify(horarioProfesor));
-  } catch (error) {
-    // Si no se puede guardar, el cambio sigue valiendo mientras la página esté abierta
-  }
-
-  vistaEditar.classList.add("oculto");
+  guardarEnNavegador();
   mostrarHorario();
 }
 
-/**/
-// ===== Tutorías: cancelar y modificar =====
-const vistaTutoria = document.getElementById("vista-tutoria");
-const textoTutoria = document.getElementById("texto-tutoria");
-const selectDiaTutoria = document.getElementById("dia-tutoria");
-const selectHoraTutoria = document.getElementById("hora-tutoria");
-const mensajeTutoria = document.getElementById("mensaje-tutoria");
-const btnGuardarTutoria = document.getElementById("btn-guardar-tutoria");
-const btnCancelarModTutoria = document.getElementById("btn-cancelar-mod-tutoria");
-
-const nombresDias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-
-// Posición (fila y día) de la tutoría que se está modificando
-let tutoriaEnEdicion = null;
-
-// Dice si el texto de una casilla es una tutoría
-function esTutoria(texto) {
-  return texto.trim().toLowerCase().startsWith("tutoría");
-}
-
-// Guarda el horario del profesor en el navegador
-function guardarEnNavegador() {
-  try {
-    localStorage.setItem(claveHorarioProfesor, JSON.stringify(horarioProfesor));
-  } catch (error) {
-    // Si no se puede guardar, el cambio sigue valiendo mientras la página esté abierta
-  }
-}
+// =====================================================
+// 6. TUTORÍAS: CANCELAR Y MODIFICAR (profesor)
+// =====================================================
 
 // Cancelar una tutoría: se vacía su casilla
 function cancelarTutoria(indiceFila, indiceDia) {
@@ -261,7 +335,7 @@ function cancelarTutoria(indiceFila, indiceDia) {
 
   horarioProfesor[indiceFila].dias[indiceDia] = "";
   // Si estaba reservada, la reserva también se elimina
-  delete reservas[indiceFila + "-" + indiceDia];
+  delete reservas[crearClave(indiceFila, indiceDia)];
   guardarReservas();
   guardarEnNavegador();
   mostrarHorario();
@@ -286,8 +360,7 @@ function abrirModificarTutoria(indiceFila, indiceDia) {
   selectHoraTutoria.value = indiceFila;
 
   mensajeTutoria.textContent = "";
-  vistaHorario.classList.add("oculto");
-  vistaTutoria.classList.remove("oculto");
+  mostrarVista(vistaTutoria);
 }
 
 // Guardar los cambios de la tutoría (texto, día y/o hora)
@@ -302,6 +375,12 @@ function guardarTutoria() {
     return;
   }
 
+  // Si el nombre no empieza por "Tutoría", dejaría de ser una tutoría y se perdería
+  if (!esTutoria(texto)) {
+    mensajeTutoria.textContent = "El nombre debe empezar por «Tutoría».";
+    return;
+  }
+
   const cambiaHueco = nuevaFila !== fila || nuevoDia !== dia;
 
   // No se puede mover a un hueco que ya tiene otra clase
@@ -311,10 +390,10 @@ function guardarTutoria() {
   }
 
   // Si la tutoría estaba reservada, la reserva se mueve con ella
-  const claveVieja = fila + "-" + dia;
+  const claveVieja = crearClave(fila, dia);
   if (reservas[claveVieja]) {
     delete reservas[claveVieja];
-    reservas[nuevaFila + "-" + nuevoDia] = true;
+    reservas[crearClave(nuevaFila, nuevoDia)] = true;
     guardarReservas();
   }
 
@@ -323,46 +402,12 @@ function guardarTutoria() {
   guardarEnNavegador();
 
   tutoriaEnEdicion = null;
-  vistaTutoria.classList.add("oculto");
   mostrarHorario();
 }
 
-/**/
-// ===== Reservar tutorías (alumno) =====
-const btnReservarTutoria = document.getElementById("btn-reservar-tutoria");
-const vistaReservar = document.getElementById("vista-reservar");
-const listaTutorias = document.getElementById("lista-tutorias");
-const mensajeReserva = document.getElementById("mensaje-reserva");
-const btnVolverReservas = document.getElementById("btn-volver-reservas");
-
-// Guarda las reservas en el navegador
-function guardarReservas() {
-  try {
-    localStorage.setItem(claveReservas, JSON.stringify(reservas));
-  } catch (error) {
-    // Si no se puede guardar, las reservas siguen valiendo mientras la página esté abierta
-  }
-}
-
-// Borra las reservas de casillas que ya no son una tutoría
-function limpiarReservas() {
-  let hayCambios = false;
-
-  Object.keys(reservas).forEach(function (clave) {
-    const partes = clave.split("-");
-    const fila = horarioProfesor[Number(partes[0])];
-    const clase = fila ? fila.dias[Number(partes[1])] : undefined;
-
-    if (typeof clase !== "string" || !esTutoria(clase)) {
-      delete reservas[clave];
-      hayCambios = true;
-    }
-  });
-
-  if (hayCambios) {
-    guardarReservas();
-  }
-}
+// =====================================================
+// 7. RESERVAR TUTORÍAS (alumno)
+// =====================================================
 
 // Reserva una tutoría libre o anula una ya reservada
 function cambiarReserva(clave) {
@@ -373,7 +418,7 @@ function cambiarReserva(clave) {
     reservas[clave] = true;
     mensajeReserva.textContent = "¡Tutoría reservada!";
   }
-  mensajeReserva.className = "exito";
+  mensajeReserva.className = "mensaje-vista exito";
 
   guardarReservas();
   mostrarListaTutorias();
@@ -392,7 +437,7 @@ function mostrarListaTutorias() {
       }
       hayTutorias = true;
 
-      const clave = indiceFila + "-" + indiceDia;
+      const clave = crearClave(indiceFila, indiceDia);
       const reservada = reservas[clave] === true;
 
       const item = document.createElement("div");
@@ -405,16 +450,10 @@ function mostrarListaTutorias() {
         info.className = "texto-reservada";
       }
 
-      const boton = document.createElement("button");
-      boton.type = "button";
-      boton.className = reservada ? "btn-mini btn-cancelar" : "btn-mini";
-      boton.textContent = reservada ? "Anular reserva" : "Reservar";
-      boton.addEventListener("click", function () {
-        cambiarReserva(clave);
-      });
-
       item.appendChild(info);
-      item.appendChild(boton);
+      item.appendChild(crearBotonMini(reservada ? "Anular reserva" : "Reservar", reservada, function () {
+        cambiarReserva(clave);
+      }));
       listaTutorias.appendChild(item);
     });
   });
@@ -426,73 +465,128 @@ function mostrarListaTutorias() {
 
 // Abre la pantalla de reservas
 function abrirReservas() {
-  // Solo el alumno puede reservar
   if (rolActual !== "alumno") {
     return;
   }
 
   mensajeReserva.textContent = "";
   mostrarListaTutorias();
-  vistaHorario.classList.add("oculto");
-  vistaReservar.classList.remove("oculto");
+  mostrarVista(vistaReservar);
 }
 
-// Eventos para ventana principal
+// =====================================================
+// 8. MIS TUTORÍAS (alumno): consultar lo que ya ha reservado
+// =====================================================
+
+// Anula una reserva desde la pantalla "Mis tutorías"
+function anularDesdeMisTutorias(clave) {
+  if (!confirm("¿Seguro que quieres anular esta reserva?")) {
+    return;
+  }
+
+  delete reservas[clave];
+  guardarReservas();
+  mostrarMisTutorias();
+  mensajeMisTutorias.textContent = "Reserva anulada.";
+  mensajeMisTutorias.className = "mensaje-vista exito";
+}
+
+// Rellena la lista con las tutorías reservadas, ordenadas por día y hora
+function mostrarMisTutorias() {
+  limpiarReservas();
+  listaMisTutorias.innerHTML = "";
+  mensajeMisTutorias.textContent = "";
+  let total = 0;
+
+  nombresDias.forEach(function (nombreDia, indiceDia) {
+    horarioProfesor.forEach(function (fila, indiceFila) {
+      const clave = crearClave(indiceFila, indiceDia);
+      if (reservas[clave] !== true) {
+        return;
+      }
+      total++;
+
+      const item = document.createElement("div");
+      item.className = "item-tutoria";
+
+      const info = document.createElement("span");
+      info.textContent = nombreDia + " · " + fila.hora;
+
+      item.appendChild(info);
+      item.appendChild(crearBotonMini("Anular reserva", true, function () {
+        anularDesdeMisTutorias(clave);
+      }));
+      listaMisTutorias.appendChild(item);
+    });
+  });
+
+  if (total === 0) {
+    resumenMisTutorias.textContent = "Todavía no has reservado ninguna tutoría";
+    listaMisTutorias.textContent = "No tienes tutorías reservadas.";
+  } else {
+    resumenMisTutorias.textContent = total === 1 ? "Tienes 1 tutoría reservada" : "Tienes " + total + " tutorías reservadas";
+  }
+}
+
+// Abre la pantalla de "Mis tutorías"
+function abrirMisTutorias() {
+  if (rolActual !== "alumno") {
+    return;
+  }
+
+  mostrarMisTutorias();
+  mostrarVista(vistaMisTutorias);
+}
+
+// =====================================================
+// 9. EVENTOS
+// =====================================================
+
+// Pantalla de inicio y selección de rol
 btnEmpezar.addEventListener("click", function () {
-  vistaLanding.classList.add("oculto");
-  vistaSeleccion.classList.remove("oculto");
+  mostrarVista(vistaSeleccion);
 });
 
 btnVolverLanding.addEventListener("click", function () {
-  vistaSeleccion.classList.add("oculto");
-  vistaLanding.classList.remove("oculto");
+  mostrarVista(vistaLanding);
 });
 
-// Eventos para cambiar entre pantallas de rol y login
 btnRolProfesor.addEventListener("click", function () {
-  rolActual = "profesor"; // guardar rol
-  tituloLogin.textContent = "Acceso Profesor"; 
-  vistaSeleccion.classList.add("oculto");
-  vistaLogin.classList.remove("oculto");
+  rolActual = "profesor";
+  tituloLogin.textContent = "Acceso Profesor";
+  mostrarVista(vistaLogin);
 });
 
-// Evento para cuando hacen clic en iniciar como alumno
 btnRolAlumno.addEventListener("click", function () {
-  rolActual = "alumno"; 
-  tituloLogin.textContent = "Acceso Alumno"; 
-  vistaSeleccion.classList.add("oculto");
-  vistaLogin.classList.remove("oculto");
+  rolActual = "alumno";
+  tituloLogin.textContent = "Acceso Alumno";
+  mostrarVista(vistaLogin);
 });
 
 btnVolver.addEventListener("click", function () {
-  vistaLogin.classList.add("oculto");
-  vistaSeleccion.classList.remove("oculto");
+  mostrarVista(vistaSeleccion);
   mensaje.textContent = "";
   campoUsuario.value = "";
   campoClave.value = "";
-  rolActual = ""; // limpieza del rol 
+  rolActual = "";
 });
 
-// evento del bóton
-botonEntrar.addEventListener("click", function (evento) {
+// Login (se activa con el botón o pulsando Enter)
+formulario.addEventListener("submit", function (evento) {
+  evento.preventDefault();
 
-  // Leemos usuario y clave
   const usuario = campoUsuario.value.trim();
   const clave = campoClave.value.trim();
 
   try {
-    // comprovamos errores
     if (usuario === "" || clave === "") {
-      throw new Error("Por favor llena los dos campos."); 
+      throw new Error("Por favor llena los dos campos.");
     }
 
-    // Comparamos usuario y contraseña según el rol 
-    if (rolActual === "profesor" && usuario === usuarioCorrectoProfesor && clave === claveCorrectaProfesor) {
-      mostrarHorario();
-    } else if (rolActual === "alumno" && usuario === usuarioCorrectoAlumno && clave === claveCorrectaAlumno) {
-      // Validación exitosa para el alumno
-      mostrarHorario();
-    } else {
+    const esProfesor = rolActual === "profesor" && usuario === usuarioCorrectoProfesor && clave === claveCorrectaProfesor;
+    const esAlumno = rolActual === "alumno" && usuario === usuarioCorrectoAlumno && clave === claveCorrectaAlumno;
+
+    if (!esProfesor && !esAlumno) {
       throw new Error("Usuario o contraseña incorrectos.");
     }
 
@@ -500,41 +594,40 @@ botonEntrar.addEventListener("click", function (evento) {
     mensaje.textContent = "";
     campoUsuario.value = "";
     campoClave.value = "";
+
+    mostrarHorario();
   } catch (error) {
     mensaje.textContent = error.message;
     mensaje.className = "error";
   }
 });
 
-// Evento para cerrar sesión
+// Cerrar sesión
 btnCerrarSesion.addEventListener("click", function () {
-  vistaHorario.classList.add("oculto");
-  vistaSeleccion.classList.remove("oculto");
-  rolActual = ""; // limpieza del rol
+  mostrarVista(vistaSeleccion);
+  rolActual = "";
 });
 
-// Eventos para editar el horario
+// Editar el horario
 btnEditarHorario.addEventListener("click", abrirEdicion);
 btnGuardarHorario.addEventListener("click", guardarHorario);
-
 btnCancelarEdicion.addEventListener("click", function () {
-  vistaEditar.classList.add("oculto");
-  vistaHorario.classList.remove("oculto");
+  mostrarVista(vistaHorario);
 });
 
-// Eventos para modificar una tutoría
+// Modificar una tutoría
 btnGuardarTutoria.addEventListener("click", guardarTutoria);
-
 btnCancelarModTutoria.addEventListener("click", function () {
   tutoriaEnEdicion = null;
-  vistaTutoria.classList.add("oculto");
-  vistaHorario.classList.remove("oculto");
+  mostrarVista(vistaHorario);
 });
 
-// Eventos para reservar tutorías
+// Reservar tutorías
 btnReservarTutoria.addEventListener("click", abrirReservas);
+btnIrMisTutorias.addEventListener("click", abrirMisTutorias);
+btnVolverReservas.addEventListener("click", mostrarHorario);
 
-btnVolverReservas.addEventListener("click", function () {
-  vistaReservar.classList.add("oculto");
-  vistaHorario.classList.remove("oculto");
-});
+// Mis tutorías
+btnMisTutorias.addEventListener("click", abrirMisTutorias);
+btnReservarOtra.addEventListener("click", abrirReservas);
+btnVolverMisTutorias.addEventListener("click", mostrarHorario);

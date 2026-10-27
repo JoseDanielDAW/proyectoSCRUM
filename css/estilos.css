@@ -1,3 +1,5 @@
+/*CSS*/
+
 /* Quitamos los márgenes que el navegador pone por defecto */
 * {
   margin: 0;
@@ -10,12 +12,13 @@ body {
   font-family: Arial, sans-serif;
   background: #eef2f7;
   min-height: 100vh;
+  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* La cajita blanca del login */
+/* La cajita blanca */
 .contenedor {
   background: white;
   width: 100%;
@@ -55,18 +58,21 @@ label {
   font-size: 14px;
 }
 
-/* Los cuadros donde se escribe */
-input {
+/* Los cuadros donde se escribe y los desplegables */
+input,
+select {
   width: 100%;
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 15px;
+  background: white;
 }
 
 /* Cuando haces clic en un cuadro, se resalta en azul */
-input:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: #2d6cdf;
 }
@@ -87,7 +93,7 @@ button:hover {
   background: #1f55b8;
 }
 
-/* Estilos específicos para los botones de la pantalla principal y volver */
+/* Estilos específicos para los botones de opciones y volver */
 .btn-opcion {
   margin-bottom: 12px;
 }
@@ -108,6 +114,19 @@ button:hover {
   font-size: 14px;
 }
 
+.mensaje-vista {
+  min-height: 20px;
+  margin: 15px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+#mensaje-tutoria {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
 .error {
   color: #d93025;
 }
@@ -119,6 +138,7 @@ button:hover {
 /* Scroll lateral si la tabla no cabe en pantallas pequeñas */
 .tabla-scroll {
   overflow-x: auto;
+  margin-bottom: 15px;
 }
 
 table {
@@ -150,12 +170,6 @@ td:first-child {
   white-space: nowrap;
 }
 
-/* Separación de los botones respecto a la tabla */
-#btn-editar-horario,
-#btn-guardar-horario {
-  margin-top: 15px;
-}
-
 /* Cuadros de texto dentro de la tabla de edición */
 table input {
   margin-bottom: 0;
@@ -164,8 +178,52 @@ table input {
   font-size: 13px;
 }
 
+/* ===== Tutorías ===== */
+
 .btn-mini {
   width: auto;
   padding: 3px 8px;
   font-size: 12px;
+}
+
+/* Botón rojo para cancelar o anular */
+.btn-cancelar {
+  background: #d93025;
+}
+
+.btn-cancelar:hover {
+  background: #b3261e;
+}
+
+/* Botones Modificar / Cancelar dentro de la celda de la tabla */
+.acciones-tutoria {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.etiqueta-reservada {
+  color: #1e8e3e;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+/* Cada tutoría en las listas del alumno */
+.item-tutoria {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.texto-reservada {
+  color: #1e8e3e;
+  font-weight: bold;
 }

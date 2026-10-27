@@ -9,6 +9,7 @@
 </head>
 <body>
 
+  <!-- Vista Landing -->
   <div id="vista-landing" class="contenedor">
     <h1>Bienvenido a la Web</h1>
     <p class="subtitulo">Tu plataforma integral para la gestión y consulta de tareas académicas.</p>
@@ -24,26 +25,24 @@
     <button type="button" id="btn-volver-landing" class="btn-secundario">Volver al inicio</button>
   </div>
 
-  <!-- Vista profesor-->
+  <!-- Vista Login (profesor y alumno, el título lo cambia JS) -->
   <div id="vista-login" class="contenedor oculto">
-    <h1>Acceso Profesor</h1>
-    <p class="subtitulo">Entra para consultar las tareas</p>
+    <h1>Acceso</h1>
+    <p class="subtitulo">Introduce tus datos para continuar</p>
 
-    <!-- El formulario con usuario y contraseña -->
+    <!-- Al ser type="submit", también funciona pulsando Enter -->
     <form id="formulario-login">
-
       <label for="usuario">Usuario</label>
       <input type="text" id="usuario" placeholder="Escribe tu usuario">
 
       <label for="clave">Contraseña</label>
       <input type="password" id="clave" placeholder="Escribe tu contraseña">
 
-      <button type="button" id="boton-entrar">Entrar</button>
+      <button type="submit" id="boton-entrar">Entrar</button>
 
-      <!-- para poner mensajes -->
       <p id="mensaje"></p>
     </form>
-    
+
     <button type="button" id="btn-volver" class="btn-secundario">Volver</button>
   </div>
 
@@ -71,8 +70,9 @@
     </div>
 
     <button type="button" id="btn-editar-horario" class="btn-opcion oculto">Editar horario</button>
+    <button type="button" id="btn-reservar-tutoria" class="btn-opcion oculto">Reservar tutoría</button>
+    <button type="button" id="btn-mis-tutorias" class="btn-opcion oculto">Mis tutorías</button>
     <button type="button" id="btn-cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
-    <button type="button" id="btn-reservar-tutoria" class="btn-opcion oculto">Reservar tutoría</button> <!--Boton para reservar una tutoria-->
   </div>
 
   <!-- Vista Editar horario (solo profesor) -->
@@ -101,8 +101,9 @@
     <button type="button" id="btn-cancelar-edicion" class="btn-secundario">Cancelar</button>
   </div>
 
-    <div id="vista-tutoria" class="contenedor oculto">
-      <h1>Modificar tutoría</h1>
+  <!-- Vista Modificar tutoría (solo profesor) -->
+  <div id="vista-tutoria" class="contenedor oculto">
+    <h1>Modificar tutoría</h1>
     <p class="subtitulo">Cambia el nombre, el día o la hora de la tutoría</p>
 
     <label for="texto-tutoria">Nombre</label>
@@ -118,7 +119,7 @@
     <button type="button" id="btn-cancelar-mod-tutoria" class="btn-secundario">Volver</button>
     <p id="mensaje-tutoria" class="error"></p>
   </div>
-  
+
   <!-- Vista Reservar tutoría (solo alumno) -->
   <div id="vista-reservar" class="contenedor oculto">
     <h1>Reservar tutoría</h1>
@@ -126,8 +127,22 @@
 
     <div id="lista-tutorias"></div>
 
-    <p id="mensaje-reserva"></p>
+    <p id="mensaje-reserva" class="mensaje-vista"></p>
+    <button type="button" id="btn-ir-mis-tutorias" class="btn-opcion">Ver mis tutorías</button>
     <button type="button" id="btn-volver-reservas" class="btn-secundario">Volver al horario</button>
   </div>
+
+  <!-- Vista Mis tutorías (solo alumno) -->
+  <div id="vista-mis-tutorias" class="contenedor oculto">
+    <h1>Mis tutorías</h1>
+    <p class="subtitulo" id="resumen-mis-tutorias"></p>
+
+    <div id="lista-mis-tutorias"></div>
+
+    <p id="mensaje-mis-tutorias" class="mensaje-vista"></p>
+    <button type="button" id="btn-reservar-otra" class="btn-opcion">Reservar otra tutoría</button>
+    <button type="button" id="btn-volver-mis-tutorias" class="btn-secundario">Volver al horario</button>
+  </div>
+
 </body>
 </html>
