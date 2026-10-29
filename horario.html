@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tareas - Horario</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/sesion.js" defer></script>
+  <script src="js/almacen.js" defer></script>
+  <script src="js/datos.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/horario.js" defer></script>
+</head>
+<body>
+
+  <div class="contenedor contenedor-ancho">
+    <h1>Horario</h1>
+    <p class="subtitulo" id="subtitulo-horario"></p>
+
+    <!-- Este div permite hacer scroll lateral en pantallas pequeñas -->
+    <div class="tabla-scroll">
+      <table id="tabla-horario">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+          </tr>
+        </thead>
+        <!-- Las filas se rellenan desde JS -->
+        <tbody id="cuerpo-horario"></tbody>
+      </table>
+    </div>
+
+    <button type="button" id="btn-editar-horario" class="btn-opcion oculto">Editar horario</button>
+    <button type="button" id="btn-reservar-tutoria" class="btn-opcion oculto">Reservar tutoría</button>
+    <button type="button" id="btn-mis-tutorias" class="btn-opcion oculto">Mis tutorías</button>
+    <button type="button" id="btn-cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
+  </div>
+
+</body>
+</html>

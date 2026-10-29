@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tareas - Comentario</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/sesion.js" defer></script>
+  <script src="js/almacen.js" defer></script>
+  <script src="js/datos.js" defer></script>
+  <script src="js/comentario.js" defer></script>
+</head>
+<body>
+
+  <div class="contenedor">
+    <h1>Comentario</h1>
+    <p class="subtitulo" id="subtitulo-comentario"></p>
+
+    <label for="texto-comentario">Comentario para el profesor (opcional)</label>
+    <textarea id="texto-comentario" maxlength="200" rows="4" placeholder="Por ejemplo: quiero repasar los ejercicios del tema 3"></textarea>
+
+    <button type="button" id="btn-guardar-comentario">Guardar comentario</button>
+    <button type="button" id="btn-cancelar-comentario" class="btn-secundario">Volver</button>
+  </div>
+
+</body>
+</html>

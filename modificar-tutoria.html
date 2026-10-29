@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tareas - Modificar tutoría</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/sesion.js" defer></script>
+  <script src="js/almacen.js" defer></script>
+  <script src="js/datos.js" defer></script>
+  <script src="js/modificar-tutoria.js" defer></script>
+</head>
+<body>
+
+  <div class="contenedor">
+    <h1>Modificar tutoría</h1>
+    <p class="subtitulo">Cambia el nombre, el día o la hora de la tutoría</p>
+
+    <label for="texto-tutoria">Nombre</label>
+    <input type="text" id="texto-tutoria" maxlength="30">
+
+    <label for="dia-tutoria">Día</label>
+    <select id="dia-tutoria"></select>
+
+    <label for="hora-tutoria">Hora</label>
+    <select id="hora-tutoria"></select>
+
+    <button type="button" id="btn-guardar-tutoria">Guardar cambios</button>
+    <button type="button" id="btn-cancelar-mod-tutoria" class="btn-secundario">Volver</button>
+    <p id="mensaje-tutoria" class="error"></p>
+  </div>
+
+</body>
+</html>

@@ -4,144 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Tareas</title>
-  <script src="js/script.js" defer></script>
   <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/index.js" defer></script>
 </head>
 <body>
 
-  <!-- Vista Landing -->
-  <div id="vista-landing" class="contenedor">
+  <div class="contenedor">
     <h1>Bienvenido a la Web</h1>
     <p class="subtitulo">Tu plataforma integral para la gestión y consulta de tareas académicas.</p>
     <button type="button" id="btn-empezar" class="btn-opcion">Empezar</button>
-  </div>
-
-  <!-- Vista Selección -->
-  <div id="vista-seleccion" class="contenedor oculto">
-    <h1>Gestión de Tareas</h1>
-    <p class="subtitulo">Selecciona cómo deseas iniciar sesión</p>
-    <button type="button" id="btn-rol-profesor" class="btn-opcion">Iniciar como profesor</button>
-    <button type="button" id="btn-rol-alumno" class="btn-opcion">Iniciar como alumno</button>
-    <button type="button" id="btn-volver-landing" class="btn-secundario">Volver al inicio</button>
-  </div>
-
-  <!-- Vista Login (profesor y alumno, el título lo cambia JS) -->
-  <div id="vista-login" class="contenedor oculto">
-    <h1>Acceso</h1>
-    <p class="subtitulo">Introduce tus datos para continuar</p>
-
-    <!-- Al ser type="submit", también funciona pulsando Enter -->
-    <form id="formulario-login">
-      <label for="usuario">Usuario</label>
-      <input type="text" id="usuario" placeholder="Escribe tu usuario">
-
-      <label for="clave">Contraseña</label>
-      <input type="password" id="clave" placeholder="Escribe tu contraseña">
-
-      <button type="submit" id="boton-entrar">Entrar</button>
-
-      <p id="mensaje"></p>
-    </form>
-
-    <button type="button" id="btn-volver" class="btn-secundario">Volver</button>
-  </div>
-
-  <!-- Vista Horario (para profesor y alumno) -->
-  <div id="vista-horario" class="contenedor contenedor-ancho oculto">
-    <h1>Horario</h1>
-    <p class="subtitulo" id="subtitulo-horario"></p>
-
-    <!-- Este div permite hacer scroll lateral en pantallas pequeñas -->
-    <div class="tabla-scroll">
-      <table id="tabla-horario">
-        <thead>
-          <tr>
-            <th>Hora</th>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miércoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-          </tr>
-        </thead>
-        <!-- Las filas se rellenan desde JS -->
-        <tbody id="cuerpo-horario"></tbody>
-      </table>
-    </div>
-
-    <button type="button" id="btn-editar-horario" class="btn-opcion oculto">Editar horario</button>
-    <button type="button" id="btn-reservar-tutoria" class="btn-opcion oculto">Reservar tutoría</button>
-    <button type="button" id="btn-mis-tutorias" class="btn-opcion oculto">Mis tutorías</button>
-    <button type="button" id="btn-cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
-  </div>
-
-  <!-- Vista Editar horario (solo profesor) -->
-  <div id="vista-editar" class="contenedor contenedor-ancho oculto">
-    <h1>Editar horario</h1>
-    <p class="subtitulo">Escribe la clase de cada hora. Deja la casilla vacía si no tienes clase.</p>
-
-    <div class="tabla-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Hora</th>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miércoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-          </tr>
-        </thead>
-        <!-- Las filas con las casillas se crean desde JS -->
-        <tbody id="cuerpo-editar"></tbody>
-      </table>
-    </div>
-
-    <button type="button" id="btn-guardar-horario">Guardar cambios</button>
-    <button type="button" id="btn-cancelar-edicion" class="btn-secundario">Cancelar</button>
-  </div>
-
-  <!-- Vista Modificar tutoría (solo profesor) -->
-  <div id="vista-tutoria" class="contenedor oculto">
-    <h1>Modificar tutoría</h1>
-    <p class="subtitulo">Cambia el nombre, el día o la hora de la tutoría</p>
-
-    <label for="texto-tutoria">Nombre</label>
-    <input type="text" id="texto-tutoria" maxlength="30">
-
-    <label for="dia-tutoria">Día</label>
-    <select id="dia-tutoria"></select>
-
-    <label for="hora-tutoria">Hora</label>
-    <select id="hora-tutoria"></select>
-
-    <button type="button" id="btn-guardar-tutoria">Guardar cambios</button>
-    <button type="button" id="btn-cancelar-mod-tutoria" class="btn-secundario">Volver</button>
-    <p id="mensaje-tutoria" class="error"></p>
-  </div>
-
-  <!-- Vista Reservar tutoría (solo alumno) -->
-  <div id="vista-reservar" class="contenedor oculto">
-    <h1>Reservar tutoría</h1>
-    <p class="subtitulo">Elige una de las tutorías que ofrece el profesor</p>
-
-    <div id="lista-tutorias"></div>
-
-    <p id="mensaje-reserva" class="mensaje-vista"></p>
-    <button type="button" id="btn-ir-mis-tutorias" class="btn-opcion">Ver mis tutorías</button>
-    <button type="button" id="btn-volver-reservas" class="btn-secundario">Volver al horario</button>
-  </div>
-
-  <!-- Vista Mis tutorías (solo alumno) -->
-  <div id="vista-mis-tutorias" class="contenedor oculto">
-    <h1>Mis tutorías</h1>
-    <p class="subtitulo" id="resumen-mis-tutorias"></p>
-
-    <div id="lista-mis-tutorias"></div>
-
-    <p id="mensaje-mis-tutorias" class="mensaje-vista"></p>
-    <button type="button" id="btn-reservar-otra" class="btn-opcion">Reservar otra tutoría</button>
-    <button type="button" id="btn-volver-mis-tutorias" class="btn-secundario">Volver al horario</button>
   </div>
 
 </body>

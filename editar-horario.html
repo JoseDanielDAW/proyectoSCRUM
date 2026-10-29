@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tareas - Editar horario</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/sesion.js" defer></script>
+  <script src="js/almacen.js" defer></script>
+  <script src="js/datos.js" defer></script>
+  <script src="js/editar-horario.js" defer></script>
+</head>
+<body>
+
+  <div class="contenedor contenedor-ancho">
+    <h1>Editar horario</h1>
+    <p class="subtitulo">Escribe la clase de cada hora. Deja la casilla vacía si no tienes clase.</p>
+
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+          </tr>
+        </thead>
+        <!-- Las filas con las casillas se crean desde JS -->
+        <tbody id="cuerpo-editar"></tbody>
+      </table>
+    </div>
+
+    <button type="button" id="btn-guardar-horario">Guardar cambios</button>
+    <button type="button" id="btn-cancelar-edicion" class="btn-secundario">Cancelar</button>
+  </div>
+
+</body>
+</html>
